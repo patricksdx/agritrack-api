@@ -1,8 +1,7 @@
-import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-import jwt from "jsonwebtoken";
-import { AuthSocket } from "./controllers/AuthSocket";
+import jwt from "jsonwebtoken";import { createServer } from "http";
 import { connectDB, sequelize } from "./config/db";
+import { AuthSocket } from "./controllers/AuthSocket";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -39,7 +38,7 @@ const io = new Server(httpServer, {
               usuario_id: number;
               usuario_email: string;
             };
-            socket.user = decoded; // 💾 Guarda la info del usuario
+            socket.user = decoded;
             console.log("✅ Usuario autenticado:", socket.user);
           } catch (error) {
             console.error("❌ Token inválido:", error);

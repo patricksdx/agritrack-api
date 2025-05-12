@@ -24,7 +24,7 @@ export class AuthSocket {
       const data = JSON.parse(rawData);
 
       try {
-        const salt = await bcrypt.genSalt(10); // Genera el salt
+        const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(data.usuario_password, salt);
 
         const nuevoUsuario = await UsuarioModel.create({
@@ -41,11 +41,10 @@ export class AuthSocket {
           usuario: nuevoUsuario,
         });
       } catch (error: any) {
-        // 💡 Usa `any` para evitar que TypeScript lo trate como `unknown`
         console.error("❌ Error en el registro:", error);
 
         const errorMessage =
-          error instanceof Error ? error.message : "Error desconocido"; // 📌 Validación de tipo
+          error instanceof Error ? error.message : "Error desconocido"; 
 
         this.socket.emit("registroError", {
           message: "Error al registrar usuario",
@@ -77,7 +76,6 @@ export class AuthSocket {
           return;
         }
 
-        // Generar Token JWT
         const token = jwt.sign(
           {
             usuario_id: usuario.getDataValue("usuario_id"),
@@ -87,7 +85,6 @@ export class AuthSocket {
           { expiresIn: "1h" }
         );
 
-        console.log("🔑 Usuario autenticado:", usuario.get());
         this.socket.emit("loginExitoso", {
           message: "Login exitoso",
           token,
