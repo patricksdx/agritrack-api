@@ -1,0 +1,28 @@
+{
+  "name": "agritrack-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "nodemon": "^3.1.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.9",
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7",
+    "socket.io": "^4.8.1"
+  },
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec \"bun run\" src/server.ts",
+    "start": "bun run build && bun run dist/server.js",
+    "build": "bun build src/server.ts --outdir dist --target bun",
+    "clean": "rm -rf dist"
+  }
+}
