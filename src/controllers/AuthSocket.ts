@@ -20,8 +20,7 @@ export class AuthSocket {
     }
 
     // 🔐 Registro de usuario
-    this.socket.on("registroUsuario", async (rawData) => {
-      const data = JSON.parse(rawData);
+    this.socket.on("registroUsuario", async (data) => {
 
       try {
         const salt = await bcrypt.genSalt(10);
@@ -54,9 +53,7 @@ export class AuthSocket {
     });
 
     // 🔑 Login de usuario
-    this.socket.on("loginUsuario", async (rawData) => {
-      const data = JSON.parse(rawData);
-
+    this.socket.on("loginUsuario", async (data) => {
       try {
         const usuario = await UsuarioModel.findOne({
           where: { usuario_email: data.usuario_email },
