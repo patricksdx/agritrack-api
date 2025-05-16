@@ -1,13 +1,24 @@
+import express from "express";
+import cors from "cors";
 import { Server, Socket } from "socket.io";
-import jwt from "jsonwebtoken";import { createServer } from "http";
-import { connectDB, sequelize } from "./config/db";
-import { AuthSocket } from "./controllers/AuthSocket";
+import jwt from "jsonwebtoken";
+import { createServer } from "http";
+import cookieParser from "cookie-parser";
 
-const httpServer = createServer();
+import { connectDB, sequelize } from "./config/db";
+import { corsOptions } from "./config/utils/cors";
+
+import authUsuarioRouter from "./routes/usuario/AuthUsuarioRoutes";
+
+const app = express();
+app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.json());
+
+const httpServer = createServer(app);
+
 const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
+  cors: corsOptions,
 });
 
 (async () => {
@@ -26,10 +37,10 @@ const io = new Server(httpServer, {
     }
 
     io.use((socket: CustomSocket, next) => {
-      const cookies = socket.handshake.headers.cookie; 
+      const cookies = socket.handshake.headers.cookie;
 
       if (cookies) {
-        const tokenMatch = cookies.match(/authToken=([^;]*)/); 
+        const tokenMatch = cookies.match(/authToken=([^;]*)/);
         const token = tokenMatch ? tokenMatch[1] : null;
 
         if (token) {
@@ -46,24 +57,26 @@ const io = new Server(httpServer, {
         }
       }
 
-      next(); 
+      next();
     });
 
+    app.use("/api/usuario", authUsuarioRouter);
+
     io.on("connection", (socket: CustomSocket) => {
-      console.log("🔌 Socket conectado:", socket.id);
+      console.log("🔌 Socket conectado:", socket.user?.usuario_email);
 
       if (socket.user) {
         console.log("🔓 Usuario autenticado, acceso permitido:", socket.user);
       } else {
-        console.log("⚠️ Usuario sin autenticación, solo login y register permitido.");
-        new AuthSocket(socket);
+        console.log(
+          "⚠️ Usuario sin autenticación, solo login y register permitido."
+        );
       }
     });
 
-    const PORT = 3000;
-    httpServer.listen(PORT, () => {
+    httpServer.listen(process.env.PORT, () => {
       console.log(
-        `🚀 Servidor WebSocket escuchando en http://localhost:${PORT}`
+        `🚀 Servidor escuchando en http://192.168.0.5:${process.env.PORT}`
       );
     });
   } catch (error) {

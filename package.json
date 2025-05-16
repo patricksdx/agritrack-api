@@ -12,9 +12,15 @@
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "jwt": "^0.2.0",
     "mysql2": "^3.14.1",
     "sequelize": "^6.37.7",
     "socket.io": "^4.8.1"
@@ -22,7 +28,7 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec \"bun run\" src/server.ts",
     "start": "bun run build && bun run dist/server.js",
-    "build": "bun build src/server.ts --outdir dist --target bun",
+    "build": "bun run build.ts",
     "clean": "rm -rf dist"
   }
 }
