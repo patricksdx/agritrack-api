@@ -9,6 +9,7 @@ import { connectDB, sequelize } from "./config/db";
 import { corsOptions } from "./config/utils/cors";
 
 import authUsuarioRouter from "./routes/usuario/AuthUsuarioRoutes";
+import plantasRouter from "./routes/planta/PlantasRoutes";
 
 const app = express();
 app.use(cors(corsOptions));
@@ -61,6 +62,7 @@ const io = new Server(httpServer, {
     });
 
     app.use("/api/usuario", authUsuarioRouter);
+    app.use("/api/plantas", plantasRouter);
 
     io.on("connection", (socket: CustomSocket) => {
       console.log("🔌 Socket conectado:", socket.user?.usuario_email);
