@@ -113,6 +113,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       message: "Login exitoso",
+      user: user,
     });
   } catch (error) {
     console.error("❌ Error en el login:", error);
