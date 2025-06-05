@@ -10,12 +10,12 @@ export const obtenerUsuario = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { token } = req.cookies;
-    if (!token) {
+    const { authToken } = req.cookies;
+    if (!authToken) {
       res.status(400).json({ message: "Falta token" });
       return;
     }
-    const decoded = jwt.verify(token, SECRET_KEY) as {
+    const decoded = jwt.verify(authToken, SECRET_KEY) as {
       usuario_id: number;
       usuario_email: string;
     };
