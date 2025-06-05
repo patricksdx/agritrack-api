@@ -69,6 +69,7 @@ export const registerUser = async (
 };
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("🚀 Login de usuario");
     const { usuario_email, usuario_password } = req.body;
 
     if (!usuario_email || !usuario_password) {
