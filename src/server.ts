@@ -78,7 +78,7 @@ const io = new Server(httpServer, {
 
     httpServer.listen(process.env.PORT, () => {
       console.log(
-        `🚀 Servidor escuchando en http://192.168.0.5:${process.env.PORT}`
+        `🚀 Servidor escuchando en http://192.168.1.46:${process.env.PORT}`
       );
     });
   } catch (error) {

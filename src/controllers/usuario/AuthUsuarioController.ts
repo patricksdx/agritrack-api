@@ -1,9 +1,45 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import type { Request, Response } from "express";
 import { UsuarioModel } from "../../models/usuario/UsuarioModel";
+import type { Request, Response } from "express";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
+
+export const obtenerUsuario = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const token = req.cookies.authToken;
+    if (!token) {
+      res
+        .status(401)
+        .json({ message: "No se encontró token de autenticación" });
+      return;
+    }
+    const decoded = jwt.verify(token, SECRET_KEY) as {
+      usuario_id: number;
+      usuario_email: string;
+    };
+
+    const usuario_id = decoded.usuario_id;
+
+    const user = await UsuarioModel.findOne({ where: { usuario_id } });
+
+    if (!user) {
+      res.status(404).json({ message: "Usuario no encontrado" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Usuario encontrado",
+      usuario: user,
+    });
+  } catch (error) {
+    console.error("❌ Error al verificar token o buscar usuario:", error);
+    res.status(401).json({ message: "Token inválido o expirado" });
+  }
+};
 
 export const registerUser = async (
   req: Request,
@@ -67,6 +103,7 @@ export const registerUser = async (
     console.error("❌ Error en el registro:", error);
   }
 };
+
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { usuario_email, usuario_password } = req.body;

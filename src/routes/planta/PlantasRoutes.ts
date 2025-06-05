@@ -3,10 +3,10 @@ import { insertarPlanta, regarPlanta, obtenerPlantasConClima, listarPlantasBasic
 
 const router = Router();
 
-router.post("/plantaInsert", insertarPlanta);
-router.put("/:plantaId/regar", regarPlanta);
-router.get("/:usuarioId/ListarPlantaClima", obtenerPlantasConClima);
-router.get(":usuarioId/ListarPlanta", listarPlantasBasico);
-router.delete("/:plantaId/BorrarPlanta", borrarPlanta);
+router.post("/agregarPlanta", insertarPlanta);
+router.put("/regarPlanta/:plantaId", regarPlanta);
+router.get("/listarPlantaClima/:plantaId", obtenerPlantasConClima);
+router.get("/listarPlanta", listarPlantasBasico);
+router.delete("/eliminarPlanta/:plantaId", borrarPlanta);
 
 export default router;
