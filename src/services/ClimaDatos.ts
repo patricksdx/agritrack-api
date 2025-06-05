@@ -19,11 +19,8 @@ export async function getClimaActual(lat: number, lon: number) {
     const luz = data.hourly.shortwave_radiation;
     const horas = data.hourly.time;
 
-    // Obtener hora local actual en formato 'YYYY-MM-DDTHH'
     const ahora = new Date().toISOString().slice(0, 13); // Puede no coincidir con hora local
-    // Alternativa si prefieres precisión:
-    // const ahora = new Date().toLocaleString("sv-SE", { timeZone: "America/Argentina/Buenos_Aires" }).slice(0, 13);
-
+    
     for (let i = 0; i < horas.length; i++) {
       if (
         horas[i]?.startsWith(ahora) &&

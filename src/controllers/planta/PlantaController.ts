@@ -118,9 +118,6 @@ export const obtenerPlantasConClima = async (req: Request, res: Response) => {
 
 export const listarPlantasBasico = async (req: Request, res: Response) => {
   const usuarioId = parseInt(req.params.usuarioId ?? "0");
-  if (isNaN(usuarioId) || usuarioId <= 0) {
-    return res.status(400).json({ error: "ID de usuario inválido" });
-  }
 
   try {
     const plantas = await PlantaModel.findAll({
@@ -132,5 +129,25 @@ export const listarPlantasBasico = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error al listar plantas:", error);
     res.status(500).json({ error: "Error al obtener plantas" });
+  }
+};
+
+export const borrarPlanta = async (req: Request, res: Response): Promise<void> => {
+  const plantaId = parseInt(req.params.plantaId ?? "0");
+  
+  try {
+    const planta = await PlantaModel.findByPk(plantaId);
+
+    if (!planta) {
+      res.status(404).json({ error: "Planta no encontrada" });
+      return;
+    }
+
+    await planta.destroy();
+
+    res.json({ mensaje: "Planta eliminada correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar la planta:", error);
+    res.status(500).json({ error: "No se pudo eliminar la planta" });
   }
 };

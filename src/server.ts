@@ -4,7 +4,7 @@ import { Server, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
-
+import { iniciarCronHumedad } from "./cron/ActualizarHumedad";
 import { connectDB, sequelize } from "./config/db";
 import { corsOptions } from "./config/utils/cors";
 
@@ -15,7 +15,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
-
+iniciarCronHumedad();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
