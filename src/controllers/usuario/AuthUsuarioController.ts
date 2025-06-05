@@ -10,6 +10,7 @@ export const obtenerUsuario = async (
   res: Response
 ): Promise<void> => {
   try {
+<<<<<<< HEAD
     const token = req.cookies.authToken;
     if (!token) {
       res
@@ -41,6 +42,34 @@ export const obtenerUsuario = async (
   }
 };
 
+=======
+    const { authToken } = req.cookies;
+    if (!authToken) {
+      res.status(400).json({ message: "Falta token" });
+      return;
+    }
+    const decoded = jwt.verify(authToken, SECRET_KEY) as {
+      usuario_id: number;
+      usuario_email: string;
+    };
+    const user = await UsuarioModel.findOne({
+      where: { usuario_id: decoded.usuario_id },
+    });
+    if (!user) {
+      res.status(400).json({ message: "Usuario no encontrado" });
+      return;
+    }
+    res.status(200).json({
+      message: "Usuario encontrado",
+      user: user,
+    });
+  } catch (error) {
+    console.error("❌ Error en la obtención del usuario:", error);
+    res.status(400).json({ message: "Error en la obtención del usuario" });
+    return;
+  }
+};
+>>>>>>> caf6257200c87bca90a681a121eed96f42a9612a
 export const registerUser = async (
   req: Request,
   res: Response
@@ -106,6 +135,7 @@ export const registerUser = async (
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("🚀 Login de usuario");
     const { usuario_email, usuario_password } = req.body;
 
     if (!usuario_email || !usuario_password) {
