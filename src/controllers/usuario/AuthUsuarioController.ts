@@ -5,6 +5,37 @@ import { UsuarioModel } from "../../models/usuario/UsuarioModel";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 
+export const obtenerUsuario = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      res.status(400).json({ message: "Falta token" });
+      return;
+    }
+    const decoded = jwt.verify(token, SECRET_KEY) as {
+      usuario_id: number;
+      usuario_email: string;
+    };
+    const user = await UsuarioModel.findOne({
+      where: { usuario_id: decoded.usuario_id },
+    });
+    if (!user) {
+      res.status(400).json({ message: "Usuario no encontrado" });
+      return;
+    }
+    res.status(200).json({
+      message: "Usuario encontrado",
+      user: user,
+    });
+  } catch (error) {
+    console.error("❌ Error en la obtención del usuario:", error);
+    res.status(400).json({ message: "Error en la obtención del usuario" });
+    return;
+  }
+};
 export const registerUser = async (
   req: Request,
   res: Response
