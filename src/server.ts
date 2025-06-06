@@ -5,19 +5,20 @@ import jwt from "jsonwebtoken";
 import { createServer } from "http";
 import cookieParser from "cookie-parser";
 import { iniciarCronHumedad } from "./cron/ActualizarHumedad";
+import { iniciarVerificacionDeRiego } from "./cron/verificarRiego";
 import { connectDB, sequelize } from "./config/db";
 import { corsOptions } from "./config/utils/cors";
-
 import authUsuarioRouter from "./routes/usuario/AuthUsuarioRoutes";
 import plantasRouter from "./routes/planta/PlantasRoutes";
-
+import { inicializarSockets } from "./sockets/socketManager";
 const app = express();
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 iniciarCronHumedad();
+iniciarVerificacionDeRiego();
 const httpServer = createServer(app);
-
+inicializarSockets(httpServer);
 const io = new Server(httpServer, {
   cors: corsOptions,
 });
@@ -78,7 +79,7 @@ const io = new Server(httpServer, {
 
     httpServer.listen(process.env.PORT, () => {
       console.log(
-        `🚀 Servidor escuchando en http://192.168.0.5:${process.env.PORT}`
+        `🚀 Servidor escuchando en http://192.168.1.46:${process.env.PORT}`
       );
     });
   } catch (error) {

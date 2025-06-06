@@ -36,6 +36,7 @@ export const obtenerUsuario = async (
     return;
   }
 };
+
 export const registerUser = async (
   req: Request,
   res: Response

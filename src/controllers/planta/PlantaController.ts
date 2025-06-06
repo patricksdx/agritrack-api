@@ -82,7 +82,6 @@ export const regarPlanta = async (req: Request, res: Response): Promise<void> =>
     res.status(401).json({ error: "Token inválido o expirado" });
   }
 };
-
 export const obtenerPlantasConClima = async (req: Request, res: Response): Promise<void> => {
   try {
     const token = req.cookies.authToken;
@@ -94,14 +93,12 @@ export const obtenerPlantasConClima = async (req: Request, res: Response): Promi
     const decoded = jwt.verify(token, SECRET_KEY) as { usuario_id: number };
     const usuarioId = decoded.usuario_id;
 
-    // Obtenemos planta_id desde params o query (ajusta según tu ruta)
-    const plantaId = parseInt(req.params.plantaId ?? req.query.plantaId as string);
+    const plantaId = parseInt(req.params.plantaId ?? (req.query.plantaId as string));
     if (isNaN(plantaId)) {
       res.status(400).json({ error: "ID de planta inválido" });
       return;
     }
 
-    // Buscamos la planta específica y validamos que sea del usuario
     const planta = await PlantaModel.findOne({
       where: {
         planta_id: plantaId,
@@ -114,30 +111,40 @@ export const obtenerPlantasConClima = async (req: Request, res: Response): Promi
       return;
     }
 
-    // Latitud y longitud fijas (puedes reemplazar con datos de planta si tienes)
-    const lat = -34.6037;
-    const lon = -58.3816;
+    // Extraemos los datos planos del modelo Sequelize
+    const {
+      planta_nombre_comun,
+      planta_descripcion,
+      planta_ubicacion,
+      planta_foto,
+      planta_humedad,
+      planta_ultima_fecha_riego,
+      planta_latitud,
+      planta_longitud,
+      planta_humedad_clima,
+    } = planta.get({ plain: true });
 
-    const { 
-      planta_nombre_comun, 
-      planta_descripcion, 
-      planta_ubicacion, 
-      planta_foto, 
-      planta_humedad, 
-      planta_ultima_fecha_riego 
-    } = planta as any;
+    const lat = planta_latitud ?? -34.6037;
+    const lon = planta_longitud ?? -58.3816;
 
-    let humedad = planta_humedad ?? 0;
+    let humedadUsuario = planta_humedad ?? 0;
 
     if (planta_ultima_fecha_riego) {
       const ultimaFecha = new Date(planta_ultima_fecha_riego);
       const hoy = new Date();
       const diasPasados = Math.floor((hoy.getTime() - ultimaFecha.getTime()) / (1000 * 60 * 60 * 24));
       const perdidaHumedad = diasPasados * 5; // 5% por día
-      humedad = Math.max(0, humedad - perdidaHumedad);
+      humedadUsuario = Math.max(0, humedadUsuario - perdidaHumedad);
     }
 
     const clima = await getClimaActual(lat, lon);
+
+    if (clima && clima.humedad !== undefined) {
+      if (planta_humedad_clima !== Math.floor(clima.humedad)) {
+        planta.planta_humedad_clima = Math.floor(clima.humedad);
+        await planta.save();
+      }
+    }
 
     res.status(200).json({
       clima: clima
@@ -145,6 +152,7 @@ export const obtenerPlantasConClima = async (req: Request, res: Response): Promi
             hora: clima.hora,
             temperatura: clima.temperatura,
             luzSolar: clima.luzSolar,
+            humedad: clima.humedad,
             estado: clima.esDeDia ? "Día" : "Noche",
           }
         : null,
@@ -153,7 +161,8 @@ export const obtenerPlantasConClima = async (req: Request, res: Response): Promi
         planta_descripcion,
         planta_ubicacion,
         planta_foto,
-        planta_humedad: Math.floor(humedad),
+        planta_humedad: Math.floor(humedadUsuario),
+        planta_humedad_clima: planta.planta_humedad_clima ?? null,
       },
     });
   } catch (error) {

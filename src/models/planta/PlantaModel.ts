@@ -1,7 +1,22 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../config/db";
 
-export class PlantaModel extends Model {}
+export class PlantaModel extends Model {
+  planta_id!: number;
+  planta_nombre_comun!: string;
+  planta_descripcion?: string;
+  planta_ubicacion?: string;
+  planta_latitud?: number;
+  planta_longitud?: number;
+  planta_fecha_adquisicion?: string;
+  planta_foto?: string;
+  planta_humedad?: number;
+  planta_humedad_clima?: number;
+  planta_ultima_fecha_riego?: Date;
+  planta_luz?: number;
+  planta_temperatura?: number;
+  planta_usuario_id!: number;
+}
 
 PlantaModel.init(
   {
@@ -39,6 +54,14 @@ PlantaModel.init(
       allowNull: true,
     },
     planta_humedad: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 0,
+        max: 100,
+      },
+    },
+    planta_humedad_clima: {
       type: DataTypes.INTEGER,
       allowNull: true,
       validate: {

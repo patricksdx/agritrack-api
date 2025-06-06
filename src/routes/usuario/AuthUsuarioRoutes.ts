@@ -8,7 +8,6 @@ import {
 const router = Router();
 
 router.get("/", obtenerUsuario);
-
 router.post("/registro", registerUser);
 router.post("/login", loginUser);
 
