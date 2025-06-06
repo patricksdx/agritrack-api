@@ -10,39 +10,6 @@ export const obtenerUsuario = async (
   res: Response
 ): Promise<void> => {
   try {
-<<<<<<< HEAD
-    const token = req.cookies.authToken;
-    if (!token) {
-      res
-        .status(401)
-        .json({ message: "No se encontró token de autenticación" });
-      return;
-    }
-    const decoded = jwt.verify(token, SECRET_KEY) as {
-      usuario_id: number;
-      usuario_email: string;
-    };
-
-    const usuario_id = decoded.usuario_id;
-
-    const user = await UsuarioModel.findOne({ where: { usuario_id } });
-
-    if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado" });
-      return;
-    }
-
-    res.status(200).json({
-      message: "Usuario encontrado",
-      usuario: user,
-    });
-  } catch (error) {
-    console.error("❌ Error al verificar token o buscar usuario:", error);
-    res.status(401).json({ message: "Token inválido o expirado" });
-  }
-};
-
-=======
     const { authToken } = req.cookies;
     if (!authToken) {
       res.status(400).json({ message: "Falta token" });
@@ -69,7 +36,6 @@ export const obtenerUsuario = async (
     return;
   }
 };
->>>>>>> caf6257200c87bca90a681a121eed96f42a9612a
 export const registerUser = async (
   req: Request,
   res: Response
